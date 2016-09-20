@@ -95,7 +95,31 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    import util
+    from game import Directions
+    from sets import Set
+    frontier = util.Queue()
+    startStates = problem.getSuccessors(problem.getStartState())
+    for state in startStates:
+        frontier.push(Node(state,None))
+    closed = []
+    while(not frontier.isEmpty()):
+        current = frontier.pop()
+        if(problem.isGoalState(current.data[0])):
+            returnList = []
+            while current.previous != None:
+                returnList.append(current.data[1])
+                current = current.previous
+            returnList.reverse()
+
+            return returnList
+        if(current.data not in closed):
+            closed.append(current.data)
+            list = problem.getSuccessors(current.data[0])
+            for posibilities in list:
+                newNode = Node(posibilities,current)
+                frontier.push(newNode)
+    return False
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
@@ -120,3 +144,8 @@ bfs = breadthFirstSearch
 dfs = depthFirstSearch
 astar = aStarSearch
 ucs = uniformCostSearch
+
+class Node:
+    def __init__(self,Data=None,previous=None):
+        self.previous = previous
+        self.data = Data
