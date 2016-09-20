@@ -90,36 +90,54 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    import util
+    frontier = util.Stack()
+    startNode = NewNode(problem.getStartState())
+    closed = []
+    frontier.push(startNode)
+    while(not frontier.isEmpty()):
+        current = frontier.pop()
+        if(problem.isGoalState(current.coordinates)):
+            returnList = []
+            while current.parent != None:
+                returnList.append(current.fromDirection)
+                current = current.parent
+            returnList.reverse()
+            return returnList
+        if(current.coordinates not in closed):
+            closed.append(current.coordinates)
+            list = problem.getSuccessors(current.coordinates)
+            for posibilities in list:
+                newNode = NewNode(posibilities[0],posibilities[1],current)
+                frontier.push(newNode)
+    return False
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     import util
-    from game import Directions
-    from sets import Set
     frontier = util.Queue()
-    startStates = problem.getSuccessors(problem.getStartState())
-    for state in startStates:
-        frontier.push(Node(state,None))
+    startNode = NewNode(problem.getStartState())
     closed = []
+    frontier.push(startNode)
     while(not frontier.isEmpty()):
         current = frontier.pop()
-        if(problem.isGoalState(current.data[0])):
+        if(problem.isGoalState(current.coordinates)):
             returnList = []
-            while current.previous != None:
-                returnList.append(current.data[1])
-                current = current.previous
+            while current.parent != None:
+                returnList.append(current.fromDirection)
+                current = current.parent
             returnList.reverse()
-
             return returnList
-        if(current.data not in closed):
-            closed.append(current.data)
-            list = problem.getSuccessors(current.data[0])
+        if(current.coordinates not in closed):
+            closed.append(current.coordinates)
+            list = problem.getSuccessors(current.coordinates)
             for posibilities in list:
-                newNode = Node(posibilities,current)
+                newNode = NewNode(posibilities[0],posibilities[1],current)
                 frontier.push(newNode)
     return False
+
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
@@ -149,3 +167,9 @@ class Node:
     def __init__(self,Data=None,previous=None):
         self.previous = previous
         self.data = Data
+
+class NewNode:
+    def __init__(self,coordinates=None,fromDirection=None,parent=None):
+        self.coordinates = coordinates
+        self.fromDirection = fromDirection
+        self.parent = parent
